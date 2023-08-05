@@ -1,0 +1,10 @@
+name: deathback
+version: '${project.version}'
+main: hotal.deathback.Deathback
+api-version: '1.20'
+load: STARTUP
+permissions:
+  dback.teleport:
+   usage: /dback
+   description: 死んだところに戻れます
+   default: true
