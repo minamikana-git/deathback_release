@@ -1,10 +1,13 @@
 name: deathback
 version: '${project.version}'
-main: hotal.deathback.Deathback
-api-version: '1.20'
+main: net.hotamachisubaru.Deathback
+api-version: '1.21'
 load: STARTUP
+commands:
+  back:
+    usage: /back
 permissions:
-  dback.teleport:
-   usage: /dback
-   description: 死んだところに戻れます
-   default: true
+  back.teleport:
+    usage: /back
+    description: 死んだところに戻れます
+    default: true

@@ -1,10 +1,8 @@
-package org.hotal.deathback;
+package net.hotamachisubaru;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,19 +10,32 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class Deathback extends JavaPlugin implements Listener {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+
+public class Deathback extends JavaPlugin implements Listener, CommandExecutor {
     private Map<UUID, Location> deathLocations;
 
     public Deathback() {
+        this.deathLocations = new HashMap<>();
     }
 
     public void onEnable() {
-        this.deathLocations = new HashMap();
+        this.deathLocations = new HashMap<>();
+        registerListeners();
+        registerCommands();
+    }
+
+    private void registerCommands() {
+        Objects.requireNonNull(this.getCommand("back")).setExecutor(this);
+    }
+    
+    private void registerListeners(){
         this.getServer().getPluginManager().registerEvents(this, this);
     }
 
-    public void onDisable() {
-    }
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
@@ -35,8 +46,8 @@ public class Deathback extends JavaPlugin implements Listener {
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender instanceof Player player) {
-            if (cmd.getName().equalsIgnoreCase("dback")) {
-                if (player.hasPermission("dback.teleport")) {
+            if (cmd.getName().equalsIgnoreCase("back")) {
+                if (player.hasPermission("back.teleport")) {
                     Location deathLocation = (Location)this.deathLocations.get(player.getUniqueId());
                     if (deathLocation != null) {
                         player.teleport(deathLocation);
@@ -54,4 +65,9 @@ public class Deathback extends JavaPlugin implements Listener {
 
         return false;
     }
+
+    public void onDisable() {
+        this.deathLocations.clear();
+    }
+
 }
