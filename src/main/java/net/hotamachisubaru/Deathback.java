@@ -1,5 +1,6 @@
 package net.hotamachisubaru;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -22,6 +23,7 @@ public class Deathback extends JavaPlugin implements Listener, CommandExecutor {
         this.deathLocations = new HashMap<>();
     }
 
+    @Override
     public void onEnable() {
         this.deathLocations = new HashMap<>();
         registerListeners();
@@ -31,11 +33,10 @@ public class Deathback extends JavaPlugin implements Listener, CommandExecutor {
     private void registerCommands() {
         Objects.requireNonNull(this.getCommand("back")).setExecutor(this);
     }
-    
-    private void registerListeners(){
-        this.getServer().getPluginManager().registerEvents(this, this);
-    }
 
+    private void registerListeners() {
+        Bukkit.getPluginManager().registerEvents(this, this);
+    }
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
@@ -44,11 +45,12 @@ public class Deathback extends JavaPlugin implements Listener, CommandExecutor {
         this.deathLocations.put(player.getUniqueId(), deathLocation);
     }
 
+    @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (sender instanceof Player player) {
             if (cmd.getName().equalsIgnoreCase("back")) {
                 if (player.hasPermission("back.teleport")) {
-                    Location deathLocation = (Location)this.deathLocations.get(player.getUniqueId());
+                    Location deathLocation = this.deathLocations.get(player.getUniqueId());
                     if (deathLocation != null) {
                         player.teleport(deathLocation);
                         player.sendMessage("§aあなたは最後に死んだ場所にテレポートしました。");
@@ -58,16 +60,14 @@ public class Deathback extends JavaPlugin implements Listener, CommandExecutor {
                 } else {
                     player.sendMessage("§7このコマンドを使用する権限がありません");
                 }
-
                 return true;
             }
         }
-
         return false;
     }
 
+    @Override
     public void onDisable() {
         this.deathLocations.clear();
     }
-
 }
